@@ -66,3 +66,11 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+### vscode in linting
+
+1. Install ESLint plugin.
+2. Make .eslintrc.json with vscode(Ctrl + shift + p > ESLint: create ESLint configuration)
+3. Check env, extends, plugins (Browser, es6 to true, extends : "eslint:recommended","plugin:react/recommended"  )
+4. Add rules for customizing (Ex. I added  "no-unused-vars":"off" for using vars later)

@@ -1,5 +1,20 @@
+@import "~bootstrap/scss/bootstrap";
+
+//use parent selector *.<name> if <name> is duplicated 
 .App {
-  text-align: center;
+  // text-align: center;
+  background-color: #e5eaf5;//freeze purple
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.App .login{
+  // background-color: white;
+  width:40vw;
+  border-radius: 5%;
+  // height: 25vh;
 }
 
 .App-logo {
@@ -36,3 +51,5 @@
     transform: rotate(360deg);
   }
 }
+
+
