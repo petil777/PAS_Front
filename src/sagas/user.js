@@ -27,7 +27,7 @@ function* checkFlow(){
     while(true){
         yield take(actions.CHECK_LOGIN_REQUEST);
         try{
-            const res = yield call(api.loginCheck);
+            const res = yield call(api.isLoggedIn);
             if(res.data.success){
                 yield put({type:actions.CHECK_LOGIN_SUCCESS})
             }

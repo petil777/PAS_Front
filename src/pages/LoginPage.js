@@ -86,7 +86,7 @@ const LoginContainer = ({history}) =>{
         dispatch(userAction.login({...info, history}))
     }
     return(
-        <div className="container login">
+        <div className="container">
         <div className="row">
           <div className="col">
             <div className="card mx-auto">

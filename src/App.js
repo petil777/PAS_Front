@@ -24,8 +24,12 @@ const App = () =>{
             {/*LoginStatus : {JSON.stringify(loginStatus)}
             <a href="http://localhost:4000/auth/google/login">Log in with google</a>
             <button onClick={()=>dispatch(userActions.testing())}>Check!</button>*/}
-            <PrivateRoute exact path='/' component={MainPage} isLoggedIn={loginStatus}/>
-            <Route exact path='/login' component={LoginPage}/>
+            <div className="main">
+                <PrivateRoute exact path='/' component={MainPage} isLoggedIn={loginStatus}/>
+            </div>
+            <div className="login">
+                <Route exact path='/login' component={LoginPage}/>
+            </div>
         </div>
     )
 }

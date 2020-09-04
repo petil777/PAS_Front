@@ -1,20 +1,47 @@
 @import "~bootstrap/scss/bootstrap";
 
 //use parent selector *.<name> if <name> is duplicated 
+/*
+  --------display : block--------
+  (display relationship is applied only with parent-child)
+  display : flex
+  flex-direction : column (default is row)
+  : To use <span>, have to wrap with <div class="row"> in this case
+  : just use <span> in case of display block
+  justify-content : center (default is flex-start)
+  : sorting main axis. In this case, vertical line is main axis
+  : If center applied, content will be in the middle of vertical line
+  align-items : center (default is stretch...accouting for whole cross axis)
+  : sorting cross-axis. In thie case, horizon line is cross axis
+  : If center applied, content will be in the middle of horizon
+  : In case of one line of items
+  (align-contents) : same with align-items but for multiple items
+  -------------------------------
+
+*/
 .App {
   // text-align: center;
   background-color: #e5eaf5;//freeze purple
   height: 100vh;
+
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+}
+.App .main{
+    .logout{
+      float: right;
+      margin-right: 1vw;
+      margin-top: 2vh;
+    }  
 }
 .App .login{
-  // background-color: white;
+  margin:auto;
   width:40vw;
-  border-radius: 5%;
-  // height: 25vh;
+  // justify-content: center;
+  // align-items: center;
+  // // background-color: white;
+  // width:40vw;
+  // border-radius: 5%;
 }
 
 .App-logo {

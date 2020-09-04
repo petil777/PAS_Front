@@ -8,11 +8,11 @@ export const login = (payload) =>{
     // return api.post('/adduser', {username, password});
     return api.post('/login', {username, password})
 }
-export const loginCheck = () =>{
-    return api.get('/api/user/loginstatus');
+export const isLoggedIn = () =>{
+    return api.get('/logincheck');
 }
 export const logout = () =>{
-    return api.post('/api/user/logout', {});
+    return api.post('/logout', {});
 }
 // export const google_login_post = () =>{
 //     return api.post('/')
