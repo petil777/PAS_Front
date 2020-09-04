@@ -86,6 +86,7 @@ const LoginContainer = ({history}) =>{
         dispatch(userAction.login({...info, history}))
     }
     return(
+      <div className="login">
         <div className="container">
         <div className="row">
           <div className="col">
@@ -102,6 +103,7 @@ const LoginContainer = ({history}) =>{
             </div>
           </div>
         </div>
+      </div>
       </div>
     )
 }

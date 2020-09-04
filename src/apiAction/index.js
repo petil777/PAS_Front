@@ -12,7 +12,7 @@ export const isLoggedIn = () =>{
     return api.get('/logincheck');
 }
 export const logout = () =>{
-    return api.post('/logout', {});
+    return api.get('/logout', {});
 }
 // export const google_login_post = () =>{
 //     return api.post('/')

@@ -7,7 +7,7 @@ export default function* loginSaga(){
 
     //Since used spawn in saga/index.js, don't have to while(true) block..?
     yield takeLatest(actions.LOGIN_REQUEST, loginFlow);
-    // yield takeLatest(actions.LOGOUT_REQUEST, logoutFlow);
+    yield takeLatest(actions.LOGOUT_REQUEST, logoutFlow);
     yield spawn(testFlow);
     yield spawn(checkFlow);
 }
@@ -29,6 +29,7 @@ function* checkFlow(){
         try{
             const res = yield call(api.isLoggedIn);
             if(res.data.success){
+                //res.status == 200(304, ...)
                 yield put({type:actions.CHECK_LOGIN_SUCCESS})
             }
             else{
@@ -47,9 +48,9 @@ function* loginFlow(action){
     try{
         const res = yield call(api.login, {username, password});
         if(res.data.user){
-            console.log('res data : ', res.data.user)
-            yield put({type:actions.LOGIN_SUCCESS, payload:{username, password}});
-            if(history) history.push('/');
+            // yield put({type:actions.LOGIN_SUCCESS, payload:{username, password}});
+            yield put({type:actions.LOGIN_SUCCESS, payload:res.data.user})
+            if(history) history.replace('/');
         }
         else{
             yield put({type:actions.LOGIN_FAILURE, payload:"authentication error : "+res.data.message});
@@ -61,15 +62,15 @@ function* loginFlow(action){
     }
 }
 
-// function* logoutFlow(action){
-//     //yield put({type:actions.LOGOUT_SUCCESS, payload:{history:action.payload.history}});
-//     const {history} = action.payload;
-//     try{
-//         yield call(api.getSignOut);
-//         yield put({type:actions.LOGOUT_SUCCESS});
-//         if(history)history.replace('/home')
-//     }
-//     catch(err){
-//         yield put({type:actions.LOGOUT_FAILURE, payload:err.message});
-//     }
-// }
+function* logoutFlow(action){
+    //yield put({type:actions.LOGOUT_SUCCESS, payload:{history:action.payload.history}});
+    const {history} = action.payload;
+    try{
+        yield call(api.logout);
+        yield put({type:actions.LOGOUT_SUCCESS});
+        if(history)history.replace('/')
+    }
+    catch(err){
+        yield put({type:actions.LOGOUT_FAILURE, payload:err.message});
+    }
+}

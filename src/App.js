@@ -1,11 +1,11 @@
 
-import React from 'react';
-import { Route, BrowserRouter} from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Route, BrowserRouter, Switch, Redirect} from 'react-router-dom';
 import createSagaMiddleware from 'redux-saga'
 
 import './App.scss';
 import PrivateRoute from './component/common/PrivateRoute';
-import { Provider, useSelector } from 'react-redux';
+import { Provider, useSelector, useDispatch } from 'react-redux';
 import reducers from './reducers'
 import rootSaga from './sagas';
 import MainPage from './pages/MainPage';
@@ -14,22 +14,22 @@ import { createStore, compose, applyMiddleware } from 'redux';
 
 import { createLogger } from 'redux-logger';
 
-const App = () =>{
+import * as userAction from 'reducers/user'
+const App = ({history}) =>{
+    const dispatch = useDispatch();
     const loginStatus = useSelector(state => state.user.loginStatus)
-
+    const loading = useSelector(state => state.user.loading)
+    useEffect(()=>{
+        dispatch(userAction.checkLogin());
+    },[])
     return(
         <div className="App">
-                {/**<Route exact path='/register' component={RegisterPage}/> */}
-
-            {/*LoginStatus : {JSON.stringify(loginStatus)}
-            <a href="http://localhost:4000/auth/google/login">Log in with google</a>
-            <button onClick={()=>dispatch(userActions.testing())}>Check!</button>*/}
-            <div className="main">
-                <PrivateRoute exact path='/' component={MainPage} isLoggedIn={loginStatus}/>
-            </div>
-            <div className="login">
-                <Route exact path='/login' component={LoginPage}/>
-            </div>
+            {loading ? "loading..." : 
+            <Switch>
+                {loginStatus ? null : <Route exact path='/login' component={LoginPage}/>}
+                <PrivateRoute path='/' component={MainPage} isLoggedIn={loginStatus}/>
+            </Switch>
+            }
         </div>
     )
 }
