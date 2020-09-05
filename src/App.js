@@ -13,7 +13,8 @@ import LoginPage from './pages/LoginPage';
 import { createStore, compose, applyMiddleware } from 'redux';
 
 import { createLogger } from 'redux-logger';
-
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 import * as userAction from 'reducers/user'
 const App = ({history}) =>{
     const dispatch = useDispatch();
@@ -24,6 +25,7 @@ const App = ({history}) =>{
     },[])
     return(
         <div className="App">
+        <ToastContainer/>
             {loading ? "loading..." : 
             <Switch>
                 {loginStatus ? null : <Route exact path='/login' component={LoginPage}/>}

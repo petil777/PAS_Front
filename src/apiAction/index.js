@@ -14,9 +14,9 @@ export const isLoggedIn = () =>{
 export const logout = () =>{
     return api.get('/logout', {});
 }
-// export const google_login_post = () =>{
-//     return api.post('/')
-// }
+export const getWeather = () =>{
+    return api.get('/forecast')
+}
 export const testapi = () =>{
     // return api.get('/test');
     // return api.post('/login', {username:'jjj', password:"1234"})
