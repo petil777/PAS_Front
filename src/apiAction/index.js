@@ -14,8 +14,9 @@ export const isLoggedIn = () =>{
 export const logout = () =>{
     return api.get('/logout', {});
 }
-export const getWeather = () =>{
-    return api.get('/forecast')
+export const getWeather = (payload) =>{
+    const {region} = payload
+    return api.get('/getweather',{params:{region}})
 }
 export const testapi = () =>{
     // return api.get('/test');

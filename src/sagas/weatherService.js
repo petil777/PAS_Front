@@ -7,6 +7,6 @@ export default function* watchWeatherSaga(){
     yield spawn(weatherDataFlow);
 }
 function* weatherDataFlow(){
-    // const getWeatherSaga = createRequestSaga(actions.WEATHER_DATA_REQUEST, api.getWeather);
-    // yield takeEvery(actions.WEATHER_DATA_REQUEST, getWeatherSaga);
+    const getWeatherSaga = createRequestSaga(actions.WEATHER_DATA_REQUEST, api.getWeather);
+    yield takeEvery(actions.WEATHER_DATA_REQUEST, getWeatherSaga);
 }
