@@ -6,8 +6,8 @@ let serviceFileName = 'weatherService';
 export const initialState ={
     serviceName: '',
     data : '',
-    accWeatherInfo:[],
-    yrWeatherInfo:[],
+    accWeatherInfo:'',
+    yrWeatherInfo:'',
     message:''
 }
 
@@ -43,24 +43,46 @@ export default handleActions({
                 "temp": "24°",
                 "precip": "0.1 mm",
                 "weather": "Fair. ",
-                "forecast_date": "2020/09/08"
+                "forecast_date": "Wednesday9 September12–18" (요일/일/월/시간대)
             },
          */
         //This is error
         if(typeof weatherData[0] == 'object'){
-            accWeatherInfo = weatherData[0].map(obj =>{
-                let robj = {...obj}
-                let highTemp = obj['temp'].split('\n')[0]
+            let temps = weatherData[0].reduce((acc, cur)=>{
+                let highTemp = cur['temp'].split('\n')[0]
                 highTemp = highTemp.substring(0, highTemp.length-1)//exclude celcius
-                let lowTemp = obj['temp'].split('\n')[1]
+                let lowTemp = cur['temp'].split('\n')[1]
                 lowTemp = lowTemp.substring(1, lowTemp.length-1)//exclude celcius and /
-                robj['temp'] = (parseInt(highTemp) + parseInt(lowTemp)) / 2
-                robj['precip'] = obj['precip'].substring(0, obj['precip'].length-1)//exclude %
-                return robj
-            })
+                acc.push((parseInt(highTemp) + parseInt(lowTemp)) / 2)
+                return acc
+            },[])
+            let precips = weatherData[0].reduce((acc, cur)=>{
+                acc.push(parseFloat(cur['precip'].substring(0, cur['precip'].length-1)))//exclude %
+                return acc
+            },[])
+            let dates = weatherData[0].reduce((acc, cur)=>{
+                acc.push(cur['forecast_date'])
+                return acc;
+            },[])
+            accWeatherInfo = {temp:temps, precip : precips, forecast_date:dates}
+        }
+        if(typeof weatherData[1] == 'object'){
+            let temps = weatherData[1].reduce((acc, cur)=>{
+                acc.push(parseInt(cur['temp'].substring(0, cur['temp'].length-1)))
+                return acc;
+            },[])
+            let precips = weatherData[1].reduce((acc, cur)=>{
+                acc.push(parseInt(cur['precip'].split(' mm')[0]))
+                return acc;
+            },[])
+            let dates = weatherData[1].reduce((acc, cur)=>{
+                acc.push(cur['forecast_date'])
+                return acc;
+            },[])
+            yrWeatherInfo = {temp:temps, precip: precips, forecast_date:dates}
         }
         //action.payload = {} ...some data and check if valid
-        return {...state, accWeatherInfo:accWeatherInfo}
+        return {...state, accWeatherInfo:accWeatherInfo, yrWeatherInfo:yrWeatherInfo}
     },
     [WEATHER_DATA_FAILURE] : (state, action)=>{
         console.error('[WEATHER_DATA_FAILURE] : ', action.payload)
