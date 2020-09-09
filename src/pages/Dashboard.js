@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useEffect } from 'react';
-
 import * as api from 'apiAction';
 import * as weatherServiceAction from 'reducers/weatherService';  
 import { useSelector, useDispatch } from 'react-redux';
@@ -8,15 +7,19 @@ import HighchartsReact from 'highcharts-react-official'
 import { Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 
+import CardComponent from 'component/CardComponent';
+
 const Dashboard = () =>{
     const dispatch = useDispatch()
     const accInfo = useSelector(state => state.weatherService.accWeatherInfo)
     const yrInfo = useSelector(state => state.weatherService.yrWeatherInfo)
+    const weatherLoading = useSelector(state =>state.weatherService.isLoading)
     const [region, setRegion] = useState("")
     const [options, setOptions] = useState({
       chart: {
         zoomType: 'xy',
-        width:'1000'
+        width:'1000',
+        height:'350'
     },
     title: {
         text: 'Average Monthly Temperature and Rainfall in Tokyo'
@@ -90,7 +93,7 @@ const Dashboard = () =>{
     }]
     })
     const [options2, setOptions2] = useState({...options})
-    const AccuWeatherChart = useMemo(() =>{
+    const AccWeatherChart = useMemo(() =>{
       const wrap =   <HighchartsReact
       highcharts={Highcharts}
       options={options}/>
@@ -104,6 +107,14 @@ const Dashboard = () =>{
       return wrap
     }, [options2])
     
+    const AccWeatherCard = useMemo(()=>{
+      return <CardComponent forecast_date={accInfo['forecast_date']} weather={accInfo['weather']}/>
+    }, [accInfo])
+
+    const YrWeatherCard = useMemo(()=>{
+      return <CardComponent forecast_date={yrInfo['forecast_date']} weather={yrInfo['weather']}/>
+    },[yrInfo])
+
     const handleGraph = () =>{
       if(region.length>0){
         dispatch(weatherServiceAction.callWeather({'region':region}))
@@ -124,7 +135,7 @@ const Dashboard = () =>{
           yAxis: 1,
           data: accInfo['precip'] ? accInfo['precip'] : [],
           tooltip: {
-              valueSuffix: ' mm'
+              valueSuffix: ' %'
           }
         }, { 
           name: 'Temperature',
@@ -165,13 +176,19 @@ const Dashboard = () =>{
       <div>
         <div style={{display:'flex', flexDirection:'row', justifyContent:'center', marginTop:'3vh'}}>
           <input type="text" onChange = {(e) => setRegion(e.target.value)} placeholder="Please input the region..."/>
-          <Button onClick={handleGraph} variant="info">Search</Button>
+          <Button onClick={handleGraph} variant="info" disabled={weatherLoading}>{!weatherLoading ? 'Search' : 'Searching...'}</Button>
           <Button onClick={()=>dispatch(weatherServiceAction.cancelWeather())} variant="danger">Cancel</Button>
         </div>
-        <div style={{display:'flex', flexDirection:'column', marginTop:'2vh'}}>
-        {AccuWeatherChart}
+        <div style={{display:'flex', flexDirection:'column', marginTop:'5vh'}}>
+          <div style={{display:'flex', justifyContent:'space-around'}}>
+            {AccWeatherChart}
+            {AccWeatherCard}
+          </div>
         <div style={{marginTop:'1vh'}}></div>
-        {YrWeatherChart}
+          <div style={{display:'flex', justifyContent:'space-around'}}>
+            {YrWeatherChart}
+            {YrWeatherCard}
+          </div>
         </div>
       </div>
     );

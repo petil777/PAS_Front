@@ -8,7 +8,8 @@ export const initialState ={
     data : '',
     accWeatherInfo:'',
     yrWeatherInfo:'',
-    message:''
+    message:'',
+    isLoading:false
 }
 
 //2) action type
@@ -25,7 +26,7 @@ export const cancelWeather = createAction(WEATHER_DATA_CANCEL);
 export default handleActions({
     [WEATHER_DATA_REQUEST] : (state, action) =>{
         toast.info("Searching....")
-        return state;
+        return {...state, isLoading:true};
     },
     [WEATHER_DATA_SUCCESS] : (state, action)=>{
         const weatherData = action.payload;
@@ -51,7 +52,7 @@ export default handleActions({
                 "forecast_date": "Wednesday9 September12–18" (요일/일/월/시간대)
             },
          */
-        //This is error
+        let msg = ''
         if(typeof weatherData[0] == 'object'){
             let temps = weatherData[0].reduce((acc, cur)=>{
                 let highTemp = cur['temp'].split('\n')[0]
@@ -69,7 +70,14 @@ export default handleActions({
                 acc.push(cur['forecast_date'])
                 return acc;
             },[])
-            accWeatherInfo = {temp:temps, precip : precips, forecast_date:dates}
+            let weathers = weatherData[0].reduce((acc, cur)=>{
+                acc.push(cur['weather'])
+                return acc;
+            },[])
+            accWeatherInfo = {temp:temps, precip : precips, forecast_date:dates, weather:weathers}
+        }
+        else{
+            msg = "Accuweather data not properly received"
         }
         if(typeof weatherData[1] == 'object'){
             let temps = weatherData[1].reduce((acc, cur)=>{
@@ -84,19 +92,27 @@ export default handleActions({
                 acc.push(cur['forecast_date'])
                 return acc;
             },[])
-            yrWeatherInfo = {temp:temps, precip: precips, forecast_date:dates}
+            let weathers = weatherData[1].reduce((acc, cur)=>{
+                acc.push(cur['weather'])
+                return acc;
+            },[])
+            yrWeatherInfo = {temp:temps, precip: precips, forecast_date:dates, weather:weathers}
         }
-        //action.payload = {} ...some data and check if valid
-        return {...state, accWeatherInfo:accWeatherInfo, yrWeatherInfo:yrWeatherInfo}
+        else{
+            msg += "yrweather data not properly received"
+        }
+        toast.success("Weather Data Request Success!")
+        return {...state, accWeatherInfo:accWeatherInfo, yrWeatherInfo:yrWeatherInfo, 
+            message:msg, isLoading:false}
     },
     [WEATHER_DATA_FAILURE] : (state, action)=>{
         console.error('[WEATHER_DATA_FAILURE] : ', action.payload)
         toast.error("Weather data get failed. : ", action.payload);
-        return {...state, data:'', message:action.payload}
+        return {...state, data:'', message:action.payload, isLoading:false}
     },
     [WEATHER_DATA_CANCEL] : (state, action) =>{
         toast.info("You cancelled weather data request")
-        return {...state}
+        return {...state, isLoading:false}
     }
 
     //Added saga having createRequestSaga!
