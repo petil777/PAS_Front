@@ -13,7 +13,7 @@ export const initialState ={
 export const SOME_DATA_REQUEST = `${serviceFileName}/SOME_DATA_REQUEST`
 export const SOME_DATA_SUCCESS = `${serviceFileName}/SOME_DATA_SUCCESS`
 export const SOME_DATA_FAILURE = `${serviceFileName}/SOME_DATA_FAILURE`
-
+export const SOME_DATA_CANCEL = `${serviceFileName}/SOME_DATA_CANCEL`
 //3) action creator
 export const callWeather = createAction(SOME_DATA_REQUEST);
 

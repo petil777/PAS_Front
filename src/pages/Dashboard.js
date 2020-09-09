@@ -5,15 +5,18 @@ import * as weatherServiceAction from 'reducers/weatherService';
 import { useSelector, useDispatch } from 'react-redux';
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
+import { Button } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 
 const Dashboard = () =>{
     const dispatch = useDispatch()
     const accInfo = useSelector(state => state.weatherService.accWeatherInfo)
     const yrInfo = useSelector(state => state.weatherService.yrWeatherInfo)
-
+    const [region, setRegion] = useState("")
     const [options, setOptions] = useState({
       chart: {
-        zoomType: 'xy'
+        zoomType: 'xy',
+        width:'1000'
     },
     title: {
         text: 'Average Monthly Temperature and Rainfall in Tokyo'
@@ -102,14 +105,19 @@ const Dashboard = () =>{
     }, [options2])
     
     const handleGraph = () =>{
-      dispatch(weatherServiceAction.callWeather({region:'분당'}))
+      if(region.length>0){
+        dispatch(weatherServiceAction.callWeather({'region':region}))
+      }
+      else{
+        toast.error('please give input for region')
+      }
     }
     //acc info hook
     useEffect(()=>{
       setOptions(prev =>{
         return {...prev, xAxis:{
           ...prev.xAxis, categories:accInfo['forecast_date'] ? accInfo['forecast_date'] : null
-        },          
+        },  title:{text : "Forecast Result of accuweather"}, subtitle:{text:"Source : https://www.accuweather.com/"} ,
           series:[{
           name: 'Rainfall',
           type: 'column',
@@ -134,7 +142,7 @@ const Dashboard = () =>{
       setOptions2(prev =>{
         return {...prev, xAxis:{
           ...prev.xAxis, categories:yrInfo['forecast_date'] ? yrInfo['forecast_date'] : null
-        },          
+        }, title : {text : 'Forecase Result of norway weather agency'},subtitle:{text:'Source : https://www.yr.no/'},
           series:[{
           name: 'Rainfall',
           type: 'column',
@@ -155,9 +163,16 @@ const Dashboard = () =>{
     },[yrInfo])
     return (
       <div>
-        <input type="button" value="Click for acc" onClick={handleGraph}></input>
+        <div style={{display:'flex', flexDirection:'row', justifyContent:'center', marginTop:'3vh'}}>
+          <input type="text" onChange = {(e) => setRegion(e.target.value)} placeholder="Please input the region..."/>
+          <Button onClick={handleGraph} variant="info">Search</Button>
+          <Button onClick={()=>dispatch(weatherServiceAction.cancelWeather())} variant="danger">Cancel</Button>
+        </div>
+        <div style={{display:'flex', flexDirection:'column', marginTop:'2vh'}}>
         {AccuWeatherChart}
+        <div style={{marginTop:'1vh'}}></div>
         {YrWeatherChart}
+        </div>
       </div>
     );
       

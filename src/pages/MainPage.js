@@ -17,7 +17,7 @@ const MainPage = ({history}) =>{
                 <Button variant="primary" onClick={handleLogout}>Logout</Button>
             </div>
             {/**Other common component */}
-            <div>
+            
                 <Switch>
                     <Route exact path="/" render={()=> <Redirect to="/dashboard" />} />
                     <Route path={`/dashboard`} exact component={Dashboard}/>
@@ -29,7 +29,7 @@ const MainPage = ({history}) =>{
                 <Route path={`${match.url}somepage`} exact component={somepage}/>
                 </Switch>
                 */}
-            </div>
+           
         </div>
     )
 }

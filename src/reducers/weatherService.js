@@ -19,9 +19,14 @@ export const WEATHER_DATA_CANCEL = `${serviceFileName}/WEATHER_DATA_CANCEL`
 
 //3) action creator
 export const callWeather = createAction(WEATHER_DATA_REQUEST);
+export const cancelWeather = createAction(WEATHER_DATA_CANCEL);
 
 //4) handleAction (all reducers)
 export default handleActions({
+    [WEATHER_DATA_REQUEST] : (state, action) =>{
+        toast.info("Searching....")
+        return state;
+    },
     [WEATHER_DATA_SUCCESS] : (state, action)=>{
         const weatherData = action.payload;
         let accWeatherInfo = ''
@@ -86,7 +91,7 @@ export default handleActions({
     },
     [WEATHER_DATA_FAILURE] : (state, action)=>{
         console.error('[WEATHER_DATA_FAILURE] : ', action.payload)
-        toast.error("Weather data get failure. Check if api server is listening");
+        toast.error("Weather data get failed. : ", action.payload);
         return {...state, data:'', message:action.payload}
     },
     [WEATHER_DATA_CANCEL] : (state, action) =>{

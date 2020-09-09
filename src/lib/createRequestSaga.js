@@ -21,7 +21,14 @@ export default function createRequestSaga(actionType, requestApi, logicFlow){
         // yield put({type:actions.START_LOADING, payload:actionType});
         try{
             const res = yield call(requestApi, action.payload, emit);
-            yield put({type:SUCCESS, payload:res.data});
+            //Error message check
+            if(res.data.message){
+                yield put({type:FAILURE, payload:res.data.message})
+            }
+            else{
+                yield put({type:SUCCESS, payload:res.data});
+
+            }
 
             // yield put({type:actions.FINISH_LOADING, payload:actionType});
         }
