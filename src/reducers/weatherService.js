@@ -54,12 +54,16 @@ export default handleActions({
          */
         let msg = ''
         if(typeof weatherData[0] == 'object'){
-            let temps = weatherData[0].reduce((acc, cur)=>{
+            let highTemp = weatherData[0].reduce((acc, cur)=>{
                 let highTemp = cur['temp'].split('\n')[0]
                 highTemp = highTemp.substring(0, highTemp.length-1)//exclude celcius
+                acc.push(parseFloat(highTemp))
+                return acc
+            },[])
+            let lowTemp = weatherData[0].reduce((acc, cur)=>{
                 let lowTemp = cur['temp'].split('\n')[1]
                 lowTemp = lowTemp.substring(1, lowTemp.length-1)//exclude celcius and /
-                acc.push((parseInt(highTemp) + parseInt(lowTemp)) / 2)
+                acc.push(parseFloat(lowTemp))
                 return acc
             },[])
             let precips = weatherData[0].reduce((acc, cur)=>{
@@ -74,7 +78,7 @@ export default handleActions({
                 acc.push(cur['weather'])
                 return acc;
             },[])
-            accWeatherInfo = {temp:temps, precip : precips, forecast_date:dates, weather:weathers}
+            accWeatherInfo = {temp:{highTemp, lowTemp}, precip : precips, forecast_date:dates, weather:weathers}
         }
         else{
             msg = "Accuweather data not properly received"
@@ -99,9 +103,12 @@ export default handleActions({
             yrWeatherInfo = {temp:temps, precip: precips, forecast_date:dates, weather:weathers}
         }
         else{
-            msg += "yrweather data not properly received"
+            msg += "\nyrweather data not properly received"
         }
         toast.success("Weather Data Request Success!")
+        if(msg){
+            toast.warn(msg)
+        }
         return {...state, accWeatherInfo:accWeatherInfo, yrWeatherInfo:yrWeatherInfo, 
             message:msg, isLoading:false}
     },

@@ -33,19 +33,6 @@ const Dashboard = () =>{
         crosshair: true
     }],
     yAxis: [{ // Primary yAxis
-        labels: {
-            format: '{value}°C',
-            style: {
-                color: Highcharts.getOptions().colors[1]
-            }
-        },
-        title: {
-            text: 'Temperature',
-            style: {
-                color: Highcharts.getOptions().colors[1]
-            }
-        }
-    }, { // Secondary yAxis
         title: {
             text: 'Rainfall',
             style: {
@@ -59,7 +46,20 @@ const Dashboard = () =>{
             }
         },
         opposite: true
-    }],
+    },{ // Secondary yAxis
+      labels: {
+          format: '{value}°C',
+          style: {
+              color: Highcharts.getOptions().colors[1]
+          }
+      },
+      title: {
+          text: 'Temperature',
+          style: {
+              color: Highcharts.getOptions().colors[1]
+          }
+      }
+  }],
     tooltip: {
         shared: true
     },
@@ -138,13 +138,20 @@ const Dashboard = () =>{
               valueSuffix: ' %'
           }
         }, { 
-          name: 'Temperature',
+          name: 'Temperature High',
           type: 'spline',
-          data: accInfo['temp'] ? accInfo['temp'] : [],
+          data: accInfo['temp'] ? accInfo['temp']['highTemp'] : [],
           tooltip: {
               valueSuffix: '°C'
           }
-      }]}
+      },{ 
+        name: 'Temperature Low',
+        type: 'spline',
+        data: accInfo['temp'] ? accInfo['temp']['lowTemp'] : [],
+        tooltip: {
+            valueSuffix: '°C'
+        }
+    }]}
       })
     },[accInfo])
 
