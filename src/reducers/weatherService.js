@@ -8,6 +8,7 @@ export const initialState ={
     data : '',
     accWeatherInfo:'',
     yrWeatherInfo:'',
+    dkWeatherInfo:'',
     message:'',
     isLoading:false
 }
@@ -32,6 +33,7 @@ export default handleActions({
         const weatherData = action.payload;
         let accWeatherInfo = ''
         let yrWeatherInfo = ''
+        let dkWeatherInfo = ''
         //weatherData[0] : accu
         /**
          * [
@@ -81,7 +83,7 @@ export default handleActions({
             accWeatherInfo = {temp:{highTemp, lowTemp}, precip : precips, forecast_date:dates, weather:weathers}
         }
         else{
-            msg = "Accuweather data not properly received"
+            msg = "Accuweather data not properly received : " + JSON.stringify(weatherData[0])
         }
         if(typeof weatherData[1] == 'object'){
             let temps = weatherData[1].reduce((acc, cur)=>{
@@ -103,13 +105,43 @@ export default handleActions({
             yrWeatherInfo = {temp:temps, precip: precips, forecast_date:dates, weather:weathers}
         }
         else{
-            msg += "\nyrweather data not properly received"
+            msg += "\nyrweather data not properly received : " + JSON.stringify(weatherData[1])
+        }
+        if(typeof weatherData[2] == 'object'){
+            let highTemp = weatherData[2].reduce((acc, cur)=>{
+                let highTemp = cur['temp'].split('\n')[0]
+                highTemp = highTemp.substring(0, highTemp.length-1)//exclude celcius
+                acc.push(parseFloat(highTemp))
+                return acc
+            },[])
+            let lowTemp = weatherData[2].reduce((acc, cur)=>{
+                let lowTemp = cur['temp'].split('\n')[1]
+                lowTemp = lowTemp.substring(1, lowTemp.length-1)//exclude celcius and /
+                acc.push(parseFloat(lowTemp))
+                return acc
+            },[])
+            let precips = weatherData[2].reduce((acc, cur)=>{
+                acc.push(parseInt(cur['precip'].split('mm')[0]))
+                return acc
+            },[])
+            let dates = weatherData[2].reduce((acc, cur)=>{
+                acc.push(cur['forecast_date'])
+                return acc;
+            },[])
+            let weathers = weatherData[2].reduce((acc, cur)=>{
+                acc.push(cur['weather'])
+                return acc;
+            },[])
+            dkWeatherInfo = {temp:{highTemp, lowTemp}, precip : precips, forecast_date:dates, weather:weathers}
+        }
+        else{
+            msg += "\nyrweather data not properly received : " + JSON.stringify(weatherData[1])
         }
         toast.success("Weather Data Request Success!")
         if(msg){
             toast.warn(msg)
         }
-        return {...state, accWeatherInfo:accWeatherInfo, yrWeatherInfo:yrWeatherInfo, 
+        return {...state, accWeatherInfo, yrWeatherInfo, dkWeatherInfo,
             message:msg, isLoading:false}
     },
     [WEATHER_DATA_FAILURE] : (state, action)=>{

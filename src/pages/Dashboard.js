@@ -13,6 +13,7 @@ const Dashboard = () =>{
     const dispatch = useDispatch()
     const accInfo = useSelector(state => state.weatherService.accWeatherInfo)
     const yrInfo = useSelector(state => state.weatherService.yrWeatherInfo)
+    const dkInfo = useSelector(state => state.weatherService.dkWeatherInfo)
     const weatherLoading = useSelector(state =>state.weatherService.isLoading)
     const [region, setRegion] = useState("")
     const [options, setOptions] = useState({
@@ -93,6 +94,7 @@ const Dashboard = () =>{
     }]
     })
     const [options2, setOptions2] = useState({...options})
+    const [options3, setOptions3] = useState({...options})
     const AccWeatherChart = useMemo(() =>{
       const wrap =   <HighchartsReact
       highcharts={Highcharts}
@@ -107,6 +109,13 @@ const Dashboard = () =>{
       return wrap
     }, [options2])
     
+    const DkWeatherChart = useMemo(()=>{
+      const wrap = <HighchartsReact
+      highcharts={Highcharts}
+      options = {options3}/>
+      return wrap
+    }, [options3])
+
     const AccWeatherCard = useMemo(()=>{
       return <CardComponent forecast_date={accInfo['forecast_date']} weather={accInfo['weather']}/>
     }, [accInfo])
@@ -114,6 +123,10 @@ const Dashboard = () =>{
     const YrWeatherCard = useMemo(()=>{
       return <CardComponent forecast_date={yrInfo['forecast_date']} weather={yrInfo['weather']}/>
     },[yrInfo])
+
+    const DkWeatherCard = useMemo(()=>{
+      return <CardComponent forecast_date={dkInfo['forecast_date']} weather={dkInfo['weather']}/>
+    }, [dkInfo])
 
     const handleGraph = () =>{
       if(region.length>0){
@@ -160,7 +173,7 @@ const Dashboard = () =>{
       setOptions2(prev =>{
         return {...prev, xAxis:{
           ...prev.xAxis, categories:yrInfo['forecast_date'] ? yrInfo['forecast_date'] : null
-        }, title : {text : 'Forecase Result of norway weather agency'},subtitle:{text:'Source : https://www.yr.no/'},
+        }, title : {text : 'Forecast Result of norway weather agency'},subtitle:{text:'Source : https://www.yr.no/'},
           series:[{
           name: 'Rainfall',
           type: 'column',
@@ -179,6 +192,37 @@ const Dashboard = () =>{
       }]}
       })
     },[yrInfo])
+    //dkinfo hook
+    useEffect(()=>{
+      setOptions3(prev =>{
+        return {...prev, xAxis:{
+          ...prev.xAxis, categories:dkInfo['forecast_date'] ? dkInfo['forecast_date'] : null
+        },  title:{text : "Forecast Result of darksky"}, subtitle:{text:"Source : https://darksky.net/"} ,
+          series:[{
+          name: 'Rainfall',
+          type: 'column',
+          yAxis: 1,
+          data: dkInfo['precip'] ? dkInfo['precip'] : [],
+          tooltip: {
+              valueSuffix: ' mm'
+          }
+        }, { 
+          name: 'Temperature High',
+          type: 'spline',
+          data: dkInfo['temp'] ? dkInfo['temp']['highTemp'] : [],
+          tooltip: {
+              valueSuffix: '°C'
+          }
+      },{ 
+        name: 'Temperature Low',
+        type: 'spline',
+        data: dkInfo['temp'] ? dkInfo['temp']['lowTemp'] : [],
+        tooltip: {
+            valueSuffix: '°C'
+        }
+    }]}
+      })
+    }, [dkInfo])
     return (
       <div>
         <div style={{display:'flex', flexDirection:'row', justifyContent:'center', marginTop:'3vh'}}>
@@ -191,10 +235,15 @@ const Dashboard = () =>{
             {AccWeatherChart}
             {AccWeatherCard}
           </div>
-        <div style={{marginTop:'1vh'}}></div>
+          <div style={{marginTop:'1vh'}}></div>
           <div style={{display:'flex', justifyContent:'space-around'}}>
             {YrWeatherChart}
             {YrWeatherCard}
+          </div>
+          <div style={{marginTop:'1vh'}}></div>
+          <div style={{display:'flex', justifyContent:'space-around'}}>
+            {DkWeatherChart}
+            {DkWeatherCard}
           </div>
         </div>
       </div>
